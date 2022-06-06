@@ -15,7 +15,8 @@
 # notwendinge Bibliotheken
 #-------------------------
 library(ISLR) #Datensatz
-
+summary(Caravan)
+plot(Caravan$Purchase)
 
 #------------------------------------
 # Aufgabe 1: Evaluierungsmetrik
