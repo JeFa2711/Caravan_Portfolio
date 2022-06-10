@@ -97,6 +97,8 @@ Caravan.scaled.trainingsdaten.output <- Caravan[aufteilung, "Purchase"]
 Caravan.scaled.testdaten.output <- Caravan[-aufteilung, "Purchase"]
 set.seed(28)
 
+predListe <- list()
+
 # K = 3
 knn.pred.k3 <- knn(
   train = Caravan.scaled.trainingsdaten,         ## Input-Variablen der Trainingsdaten      
@@ -109,6 +111,9 @@ knn.pred.k3 <- knn(
 confusion.table.k3 <- table(knn.pred.k3,Caravan.scaled.testdaten.output)
 confusion.table.k3
 
+predListe[[1]] = confusion.table.k3
+
+
 # K=4
 knn.pred.k4 <- knn(
   train = Caravan.scaled.trainingsdaten,         ## Input-Variablen der Trainingsdaten      
@@ -120,6 +125,7 @@ knn.pred.k4 <- knn(
 
 confusion.table.k4 <- table(knn.pred.k4,Caravan.scaled.testdaten.output)
 confusion.table.k4
+predListe[[2]] = confusion.table.k4
 
 #K=5
 knn.pred.k5 <- knn(
@@ -132,6 +138,7 @@ knn.pred.k5 <- knn(
 
 confusion.table.k5 <- table(knn.pred.k5,Caravan.scaled.testdaten.output)
 confusion.table.k5
+predListe[[3]] = confusion.table.k5
 
 
 #------------------------------------
@@ -144,5 +151,51 @@ confusion.table.k5
 # Zusammenfassend die Übersicht: 
 # Logistische Regression: 
 
-library (ROCR)
+# Jonas's Backlog
+precision <-  confusion.table.k4[[4]]/(confusion.table.k4[[4]] + confusion.table.k4[[3]])
+recall <- confusion.table.k4[[4]]/(confusion.table.k4[[4]]+confusion.table.k4[[2]])
+f1.score <- 2*(recall*precision)/(recall+precision)
+
+errechneF1score <- function(matrix){
+  recall <- errechneRecall(matrix= matrix)
+  precision <- errechnePrecision(matrix=matrix)
+  return ( 2*(recall*precision)/(recall+precision))
+}
+
+errechnePrecision <- function(matrix){
+  return(
+    matrix[[4]]/(matrix[[4]] + matrix[[3]])
+  )
+}
+
+errechneRecall <- function(matrix){
+  return(
+    matrix[[4]]/(matrix[[4]] + matrix[[2]])
+  )
+}
+bestimmeBestenf1Wert <- function(matrixListe){
+  f1Werte <- vector()# Vektor, in dem alle Werte gespeichert werden
+  
+  for ( i in 1:length(matrixListe) ){
+    f1Werte <- append(f1Werte,  errechneF1score(matrixListe[[i]]))
+  }
+  for(i in 1:length(f1Werte)){
+    if(f1Werte[i]==   max(f1Werte)){
+      cat("Der Index des Maximalen Wertes ist:")
+      print(i)
+      cat("Der Maximale Wert ist: ")
+      print(max(f1Werte))
+      print("Das  Modell mit dem besten F1 Wert ist")
+      
+      return(matrixListe[[i]])
+    }
+  }
+  
+}
+
+
+kombinierteListe <- append(wahrheitsMatrix, predListe)
+bestimmeBestenf1Wert(kombinierteListe)
+
+
 
