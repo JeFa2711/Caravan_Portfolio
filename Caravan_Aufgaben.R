@@ -71,7 +71,7 @@ plot(vorhergeseheneWerte, col = adjustcolor("blue", alpha = 0.35))
 # Aus diesen Werten wurden nun,nach dem eigenem ermessen der Mitarbeiter Cut-Off points definiert 
 # Der Fokus liegt hierbei im Bereich 0-01-0.1, da der Plot aufzeigt, dass hier die meisten Werte zu finden sind.
 
-t <- c(0.01,0.05,0.07,0.1, 0.2)
+t <- c(0.01,0.05,0.07, 0.1, 0.2, 0.3)
 wahrheitsMatrix <- list()
 
 for ( i in 1:length(t)) {
@@ -97,49 +97,36 @@ Caravan.scaled.trainingsdaten.output <- Caravan[aufteilung, "Purchase"]
 Caravan.scaled.testdaten.output <- Caravan[-aufteilung, "Purchase"]
 set.seed(28)
 
-predListe <- list()
-
-# K = 3
-knn.pred.k3 <- knn(
-  train = Caravan.scaled.trainingsdaten,         ## Input-Variablen der Trainingsdaten      
-  test  = Caravan.scaled.testdaten,              ## Input-Variablen der Testdaten
-  cl    = Caravan.scaled.trainingsdaten.output,  ## Class-Label der Trainingsdaten
-  k     = 3,
-  prob = FALSE
-) 
-
-confusion.table.k3 <- table(knn.pred.k3,Caravan.scaled.testdaten.output)
-confusion.table.k3
-
-predListe[[1]] = confusion.table.k3
 
 
-# K=4
-knn.pred.k4 <- knn(
-  train = Caravan.scaled.trainingsdaten,         ## Input-Variablen der Trainingsdaten      
-  test  = Caravan.scaled.testdaten,              ## Input-Variablen der Testdaten
-  cl    = Caravan.scaled.trainingsdaten.output,  ## Class-Label der Trainingsdaten
-  k     = 4,
-  prob = FALSE
-) 
+#Fertige funktion
+knnBerechnen <- function(k){
+  return( knn(
+    train = Caravan.scaled.trainingsdaten,         ## Input-Variablen der Trainingsdaten      
+    test  = Caravan.scaled.testdaten,              ## Input-Variablen der Testdaten
+    cl    = Caravan.scaled.trainingsdaten.output,  ## Class-Label der Trainingsdaten
+    k     = k,
+    prob = FALSE
+  ) )
+}
 
-confusion.table.k4 <- table(knn.pred.k4,Caravan.scaled.testdaten.output)
-confusion.table.k4
-predListe[[2]] = confusion.table.k4
+knnListeBerechnen <- function(vektor){
+  
+  knnModellListe <- list()
+  knnWahrheitsmatrixListe <- list()
+  for(i in 1:length(vektor)){
+    knnModellListe[[i]] <- knnBerechnen(vektor[i])
+  }
+  
+  for(i in 1:length(knnModellListe)){
+    knnWahrheitsmatrixListe[[i]] <- table(knnModellListe[[i]],Caravan.scaled.testdaten.output)
+  }
+  return(knnWahrheitsmatrixListe)
+}
 
-#K=5
-knn.pred.k5 <- knn(
-  train = Caravan.scaled.trainingsdaten,         ## Input-Variablen der Trainingsdaten      
-  test  = Caravan.scaled.testdaten,              ## Input-Variablen der Testdaten
-  cl    = Caravan.scaled.trainingsdaten.output,  ## Class-Label der Trainingsdaten
-  k     = 5,
-  prob = FALSE
-) 
-
-confusion.table.k5 <- table(knn.pred.k5,Caravan.scaled.testdaten.output)
-confusion.table.k5
-predListe[[3]] = confusion.table.k5
-
+#zu verwendene K werte , WErte höher als 7 können nicht verewndet
+kWerte <- c(1,2,3,4,5,6)
+knnWahrheitsmatrixListe <- knnListeBerechnen(kWerte)
 
 #------------------------------------
 # Aufgabe 5: Modellauswahl
@@ -173,6 +160,7 @@ errechneRecall <- function(matrix){
     matrix[[4]]/(matrix[[4]] + matrix[[2]])
   )
 }
+#funktioniert nur für Werte bis 6 bei Knn
 bestimmeBestenf1Wert <- function(matrixListe){
   f1Werte <- vector()# Vektor, in dem alle Werte gespeichert werden
   
@@ -192,10 +180,12 @@ bestimmeBestenf1Wert <- function(matrixListe){
   }
   
 }
-
-
-kombinierteListe <- append(wahrheitsMatrix, predListe)
+#Möglichkeit wenn ich Lust habe: automatisch bestimmen, zu wem der zwei es gehört 
+# Verbinden beider Listen 
+kombinierteListe <- append(wahrheitsMatrix, knnWahrheitsmatrixListe)
 bestimmeBestenf1Wert(kombinierteListe)
+#TODO ERgebnisse hier in TExt kopieren
+#Das BEste Ergebnis ist 0.2 bei erstem X-........
 
 
 
