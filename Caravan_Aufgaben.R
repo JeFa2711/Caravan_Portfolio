@@ -12,6 +12,7 @@
 # notwendinge Bibliotheken
 #-------------------------
 library(ISLR) #Datensatz
+## Übersicht
 summary(Caravan)
 plot(Caravan$Purchase)
 
@@ -19,13 +20,19 @@ plot(Caravan$Purchase)
 # Aufgabe 1: Evaluierungsmetrik
 #------------------------------------
 
-#    ...Platz für Ihre Antwort / Ihren Code...
 
 #------------------------------------
 # Aufgabe 2: Trainings- und Testdaten
 #------------------------------------
+# Der Caravan Datensatz hat 5822 Datensätze und 86 Attribute
+# 80% (Trainingsdaten) von 5822 sind ~4658 
+# Entsprechend dazu 1164 Datensätze für die Testdaten 
 
-#    ...Platz für Ihren Code...
+set.seed(28)
+laenge <- nrow(Caravan)
+aufteilung <- sample(laenge,0.8*laenge)
+trainingsdaten <- Caravan[aufteilung,]
+testdaten <- Caravan[-aufteilung,]
 
 #------------------------------------
 # Aufgabe 3: Logistische Regression
