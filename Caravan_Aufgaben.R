@@ -3,9 +3,6 @@
 #        -- Analyse des Caravan-Datensatz -- 
 #
 
-#-----------------
-# Bitte ausfüllen:
-#-----------------
 # Gruppenname: Anakin
 # Gruppenteilnehmer: Nina Heyer, Jonas Lang, Simon Baader, Jessica Fander
 
