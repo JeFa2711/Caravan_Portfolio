@@ -98,12 +98,16 @@ for ( i in 1:length(t)) {
 #------------------------------------
 # Aufgabe 4: KNN
 #------------------------------------
-#Für die Verwendung in KNN, müssen die Testdaten in data.frames umgewandelt werden. 
-Caravan.scaled = subset(Caravan, select = -c(Purchase) )
 
+# Um den Wert skalieren zu könnnen, muss ein Datensatz verwendet werden, aus dem die nicht numerische Purchase Output variable entfernt wurde
+Caravan.scaled = subset(Caravan, select = -c(Purchase) )
 scale(Caravan.scaled)
+
+#Für die Verwendung in KNN, müssen die Testdaten in data.frames umgewandelt werden.
 Caravan.scaled.trainingsdaten <- as.data.frame(Caravan.scaled[aufteilung,])
 Caravan.scaled.testdaten <- as.data.frame(Caravan.scaled[-aufteilung,])
+
+#Abspeichern der purchase Variablen, die aus Caravan.scaled entfernt wurden in einer eigenen Variable für die spätere Verwendung
 Caravan.scaled.trainingsdaten.output <- Caravan[aufteilung, "Purchase"]
 Caravan.scaled.testdaten.output <- Caravan[-aufteilung, "Purchase"]
 set.seed(28)
@@ -145,10 +149,7 @@ knnWahrheitsmatrixListe <- knnListeBerechnen(kWerte)
 # um die Arbeitszeit nicht zu verschwenden. Andererseits soll es auch möglichst viele Personen erkennen,
 # die Interesse an einer Police haben, um diese zu verkaufen.
 
-# Recall und Precision werden berrechnet. Anschließend daraus der F1-Score.
-precision <-  confusion.table.k4[[4]]/(confusion.table.k4[[4]] + confusion.table.k4[[3]])
-recall <- confusion.table.k4[[4]]/(confusion.table.k4[[4]]+confusion.table.k4[[2]])
-f1.score <- 2*(recall*precision)/(recall+precision)
+#Funktion zur Berechnung des F1-Scores. Sie greift für eine bessere Übersichtlichkeit auf Methoden zur Berechnung des Recalls und der Precision zu
 
 errechneF1score <- function(matrix){
   recall <- errechneRecall(matrix= matrix)
@@ -156,6 +157,7 @@ errechneF1score <- function(matrix){
   return ( 2*(recall*precision)/(recall+precision))
 }
 
+#Für die werte werden die Positionen innerhalb der Wahrheitsmatrix verwendet
 errechnePrecision <- function(matrix){
   return(
     matrix[[4]]/(matrix[[4]] + matrix[[3]])
@@ -194,13 +196,15 @@ bestimmeBestenf1Wert(kombinierteListe)
 
 # Die Ergebnisse: 
 # Durch die Funktion bestimmeBestenf1Wert, wird das Ergebnis ausgegeben 
+
 # Der Maximale Wert ist: 0.256
 # Das  Modell mit dem besten F1 Wert ist:
 # test.vorhersage   
 #                   No     Yes
 #           No      1056   53
 #           Yes     40     16
-# Dabei handelt es sich um ein Modell der logistischen Regression mit t = 0.2
+# Der index des maximalen Wertes in der kombinierten Liste ist 5 
+# Damit lässt sich oben nachlesen, dass es handelt es sich um ein Modell der logistischen Regression mit t = 0.2
 
 
 
