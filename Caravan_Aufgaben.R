@@ -6,8 +6,6 @@
 # Gruppenname: Anakin
 # Gruppenteilnehmer: Nina Heyer, Jonas Lang, Simon Baader, Jessica Fander
 
-
-
 #-------------------------
 # notwendinge Bibliotheken
 #-------------------------
@@ -75,8 +73,8 @@ vorhergeseheneWerte <- predict(
 
 plot(vorhergeseheneWerte, col = adjustcolor("blue", alpha = 0.35))
 
-# Aus diesen Werten wurden nun,nach dem eigenem Ermessen der Gruppenmitglieder Cutoff Points definiert.
-# Der Fokus liegt hierbei im Bereich 0-01-0.1, da der Plot aufzeigt, dass hier die meisten Werte zu finden sind.
+# Aus diesen Werten wurden nun, nach dem eigenem Ermessen der Gruppenmitglieder Cutoff Points definiert.
+# Der Fokus liegt hierbei im Bereich 0.01-0.3, da der Plot aufzeigt, dass hier die meisten Werte zu finden sind.
 
 t <- c(0.01,0.05,0.07, 0.1, 0.2, 0.3)
 wahrheitsMatrix <- list()
@@ -99,7 +97,7 @@ for ( i in 1:length(t)) {
 # Aufgabe 4: KNN
 #------------------------------------
 
-# Um den Wert skalieren zu könnnen, muss ein Datensatz verwendet werden, aus dem die nicht numerische Purchase Output variable entfernt wurde
+# Um den Wert skalieren zu könnnen, muss ein Datensatz verwendet werden, aus dem die nicht numerische Purchase Output variable entfernt wurde.
 Caravan.scaled = subset(Caravan, select = -c(Purchase) )
 scale(Caravan.scaled)
 
@@ -107,7 +105,7 @@ scale(Caravan.scaled)
 Caravan.scaled.trainingsdaten <- as.data.frame(Caravan.scaled[aufteilung,])
 Caravan.scaled.testdaten <- as.data.frame(Caravan.scaled[-aufteilung,])
 
-#Abspeichern der purchase Variablen, die aus Caravan.scaled entfernt wurden in einer eigenen Variable für die spätere Verwendung
+#Abspeichern der Purchase Variablen, die aus Caravan.scaled entfernt wurden in einer eigenen Variable für die spätere Verwendung.
 Caravan.scaled.trainingsdaten.output <- Caravan[aufteilung, "Purchase"]
 Caravan.scaled.testdaten.output <- Caravan[-aufteilung, "Purchase"]
 set.seed(28)
@@ -137,7 +135,7 @@ knnListeBerechnen <- function(vektor){
   return(knnWahrheitsmatrixListe)
 }
 
-# Zu verwendene K-Werte , Werte höher als 7 werden nicht verwendet
+# Zu verwendene K-Werte , Werte höher als 7 werden nicht verwendet.
 kWerte <- c(1,2,3,4,5,6)
 knnWahrheitsmatrixListe <- knnListeBerechnen(kWerte)
 
@@ -149,7 +147,7 @@ knnWahrheitsmatrixListe <- knnListeBerechnen(kWerte)
 # um die Arbeitszeit nicht zu verschwenden. Andererseits soll es auch möglichst viele Personen erkennen,
 # die Interesse an einer Police haben, um diese zu verkaufen.
 
-#Funktion zur Berechnung des F1-Scores. Sie greift für eine bessere Übersichtlichkeit auf Methoden zur Berechnung des Recalls und der Precision zu
+#Funktion zur Berechnung des F1-Scores. Sie greift für eine bessere Übersichtlichkeit auf Methoden zur Berechnung des Recalls und der Precision zu.
 
 errechneF1score <- function(matrix){
   recall <- errechneRecall(matrix= matrix)
@@ -157,7 +155,7 @@ errechneF1score <- function(matrix){
   return ( 2*(recall*precision)/(recall+precision))
 }
 
-#Für die werte werden die Positionen innerhalb der Wahrheitsmatrix verwendet
+# Für die werte werden die Positionen innerhalb der Wahrheitsmatrix verwendet.
 errechnePrecision <- function(matrix){
   return(
     matrix[[4]]/(matrix[[4]] + matrix[[3]])
@@ -203,8 +201,8 @@ bestimmeBestenf1Wert(kombinierteListe)
 #                   No     Yes
 #           No      1056   53
 #           Yes     40     16
-# Der index des maximalen Wertes in der kombinierten Liste ist 5 
-# Damit lässt sich oben nachlesen, dass es handelt es sich um ein Modell der logistischen Regression mit t = 0.2
+# Der Index des maximalen Wertes in der kombinierten Liste ist 5. 
+# Damit lässt sich oben nachlesen, dass es sich um ein Modell der logistischen Regression mit t = 0.2 handelt. 
 
 
 
