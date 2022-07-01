@@ -23,8 +23,8 @@
 #-----------------
 # Gruppe: Anakin
 # Namen und Matrikelnummern:
-# Jonas Lang, 
-# Simon Baader, 
+# Jonas Lang, 7904543
+# Simon Baader, 9879031
 # Nina Heyer, 
 # Jessica Fander, 2525677
 
@@ -102,7 +102,8 @@ abline(reg= lm.fit.all, col ="blue")
 #    ...Platz für Ihre Begründung...
 
 #TODO TEXTT_ wie im plot erkenntlich, eine gerade kann es nicht wiederspiegeln, deswegen ein offensichtlicher Fall des underfitting
-#Hier viel besser 
+#Hier viel besser
+
 
 #------------------------------------
 # Aufgabe 4: Ridge Regression
@@ -182,4 +183,5 @@ test.mqa.lasso
 test.mqa.ridge
 #Ergebnis: 1] 28.66372
 
-#  Der Testfehler ist bei allen 
+#  Der Testfehler ist bei allen vergleichbar (sogar leicht höher als in der Lineraren Regression), weil die Regualrisierung 
+# Regularisierung bestraft overfitting mit dem Strafterm lambda, um so die Varianz zu refuzieren. Da hier jedoch underfitting vorliegt, keine Positiven aspekte 
