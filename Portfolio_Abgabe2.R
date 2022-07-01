@@ -176,7 +176,10 @@ coef(lasso.fit)
 # Aufgabe 6: Vergleich der Ergebnisse
 #------------------------------------
 test.mqa.lm
+#Ergebnis: [1] 28.45997
 test.mqa.lasso
+#Ergebnis: [1] 28.50109
 test.mqa.ridge
+#Ergebnis: 1] 28.66372
 
 #  Der Testfehler ist bei allen 
