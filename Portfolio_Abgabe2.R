@@ -25,42 +25,40 @@
 # Namen und Matrikelnummern:
 # Jonas Lang, 7904543
 # Simon Baader, 9879031
-# Nina Heyer, 
+# Nina Heyer, 8804482
 # Jessica Fander, 2525677
-
-
 
 
 #-------------------------
 # notwendinge Bibliotheken
 #-------------------------
+
 library(mlbench) #Datensatz
 library(glmnet)  #Ridge/Lasso-Regression
 
 data("BostonHousing")
 
-
 #------------------------------------
 # Aufgabe 1: Trainings- und Testdaten
 #------------------------------------
 
-#    ...Platz für Ihren Code...
-seed <- seed #damit alle seed funktionen den gleichen seed haben
+seed <- seed # Damit alle Seed-Funktionen den gleichen Seed haben.
 set.seed(seed) # Für bessere Nachvollziehbarkeit wird ein Seed gesetzt.
 laenge <- length(BostonHousing$crim) # Anzahl der Datensätze
 aufteilung <- sample(laenge,0.8*laenge) # Aufteilung für Test und Trainingsdaten
 BostonHousing.trainingsdaten <- BostonHousing[aufteilung,] # Trainingsdaten
 BostonHousing.testdaten<- BostonHousing[-aufteilung,] # Testdaten
 
-
 #------------------------------------
 # Aufgabe 2: Lineare Regression
 #------------------------------------
+
+# Lineares Modell 
 lm.fit.all <- lm(
   formula = medv ~ .,
   data = BostonHousing.trainingsdaten
 )
-
+# Funktion für MQA für Trainingsdaten
 mqaTraining <- function(modell){
   return( 
     mean(
@@ -68,6 +66,7 @@ mqaTraining <- function(modell){
     )
 }
 
+# Funktion für MQA für Trainingsdaten
 mqaTest <- function(modell){
   return( 
     mean(
@@ -75,82 +74,87 @@ mqaTest <- function(modell){
   )
 }
 
-
+# Summary für bessere Übersicht
 summary(lm.fit.all)
-
-
 
 #Trainingsfehler
 training.mqa.lm <- mqaTraining(lm.fit.all)
 training.mqa.lm
 
-
-
 #Testfehler
 test.mqa.lm <- mqaTest(lm.fit.all)
-test.mqa.lm
+test.mqa.lm 
 
 
 #------------------------------------
 # Aufgabe 3: Bias-Variance
 #------------------------------------
 
-#over/underfitting 
+# Over-/Underfitting 
 plot(BostonHousing$medv)
 abline(reg= lm.fit.all, col ="blue")
 
-#    ...Platz für Ihre Begründung...
+# Im Plot erkennt man eindeutig, dass eine lineares Modell die Daten nicht erklären kann.
+# Deshalb liegt hier ein Fall von Underfitting vor. 
 
-#TODO TEXTT_ wie im plot erkenntlich, eine gerade kann es nicht wiederspiegeln, deswegen ein offensichtlicher Fall des underfitting
-#Hier viel besser
-
+# Der Bias ist hoch, wenn ein Modell zu allgemein ist, um genaue Prognosen zu treffen. 
+# Das ist hier der Fall, da der Zusammenhang, wie man auf dem Plot sehen kann, nicht linear ist, aber mit einem linearen Modell
+# erklärt werden soll. Die Varianz ist niedrig. 
 
 #------------------------------------
 # Aufgabe 4: Ridge Regression
 #------------------------------------
 
-#    ...Platz für Ihren Code...
-# Kommentar: ich habe ehrlich gesagt keine Ahnung ob das richtig ist 
 library(glmnet)
 set.seed(seed)
+# Liste von Lambda-Werten, die das Modell ausprobieren soll (aus Aufgabenstellung)
 lambda <- 10^seq( from = 5, to = -3, length = 100)
 
-#TODO Beschreibung
+#Trainingsdatenmatrizen für die unabhängigen (x) und abhängigen Variablen (y) erstellen
 BostonHousing.trainingsdaten.x <- data.matrix(subset(BostonHousing.trainingsdaten, select = -c(medv) ))
 BostonHousing.trainingsdaten.y <- BostonHousing.trainingsdaten[, "medv"]
 
-#passende Daten für den Test zut bestimmung des Testfehlers
+# Passende Daten für den Test zur Bestimmung des Testfehlers
 BostonHousing.testdaten.x <- data.matrix(subset(BostonHousing.testdaten, select = -c(medv) ))
 BostonHousing.testdaten.y <- BostonHousing.testdaten[, "medv"]
 
+# Ridge Regressionsmodell
 ridge.fit.cv <- cv.glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 0, lambda =lambda)
+
+# Optimales Lambda finden
 bestes_lambda.ridge <- ridge.fit.cv$lambda.min
+
+# Modell mit optimalem Lambda
 ridge.fit <- glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 0, lambda =bestes_lambda.ridge)
 
-
+# Testfehler
 test.mqa.ridge<- mean(
   (BostonHousing.testdaten.y - predict(ridge.fit, BostonHousing.testdaten.x))^2
 )
 test.mqa.ridge
+
 #------------------------------------
 # Aufgabe 5: Lasso Regression
 #------------------------------------
 
-#    ...Platz für Ihren Code...
+# Lasso Regressionsmodell
 lasso.fit.cv <- cv.glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 1, lambda =lambda)
+
+# Optimales Lambda finden
 bestes_lambda.lasso <- lasso.fit.cv$lambda.min
+
+# Modell mit optimalem Lambda
 lasso.fit <- glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 1, lambda =bestes_lambda.lasso)
 
-
-
+# Testfehler
 test.mqa.lasso<- mean(
   (BostonHousing.testdaten.y - predict(lasso.fit, BostonHousing.testdaten.x))^2
 )
-
 test.mqa.lasso
 
-#Feature_selection
+# Feature Selection
 coef(lasso.fit)
+
 # Ergebnis:
 #14 x 1 sparse Matrix of class "dgCMatrix"
 #s0
@@ -169,25 +173,17 @@ coef(lasso.fit)
 # b             0.010684410
 # lstat        -0.533948281
 
-#Die indus und age Variablen werden im Finalen Modell mit Null geschätzt, 
-#deshalb wird statt einer Zahl ( die im ridge zwar klein aber nicht direkt 0 wird) ein punkt angezeigt
-#==> steht für null
+# Die "indus" und "age" Variablen werden im finalen Modell mit Null geschätzt, 
+# Deshalb wird statt einer Zahl (die im Ridge zwar klein, aber nicht direkt 0 wird) ein Punkt angezeigt, welcher für 0 steht.
 
 #------------------------------------
 # Aufgabe 6: Vergleich der Ergebnisse
 #------------------------------------
-<<<<<<< Updated upstream
+
 test.mqa.lm
-#Ergebnis: [1] 28.45997
 test.mqa.lasso
-#Ergebnis: [1] 28.50109
 test.mqa.ridge
-#Ergebnis: 1] 28.66372
 
-#  Der Testfehler ist bei allen vergleichbar (sogar leicht höher als in der Lineraren Regression), weil die Regualrisierung 
-# Regularisierung bestraft overfitting mit dem Strafterm lambda, um so die Varianz zu refuzieren. Da hier jedoch underfitting vorliegt, keine Positiven aspekte 
-=======
-
-#    ...Platz für Ihren Code und Begründung...
-
->>>>>>> Stashed changes
+# Der Testfehler ist bei allen vergleichbar, weil die Regularisierung Overfitting (anhand des Strafterms Lambda) bestrafen soll.
+# Durch das lineare Modell liegt hier allerdings Underfitting vor (siehe Aufgabe 3), weshalb Regularisierungsmethoden
+# an dieser Stelle keinen Sinn ergeben und auch den Testfehler somit nicht reduzieren. 
