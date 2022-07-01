@@ -176,6 +176,7 @@ coef(lasso.fit)
 #------------------------------------
 # Aufgabe 6: Vergleich der Ergebnisse
 #------------------------------------
+<<<<<<< Updated upstream
 test.mqa.lm
 #Ergebnis: [1] 28.45997
 test.mqa.lasso
@@ -185,3 +186,8 @@ test.mqa.ridge
 
 #  Der Testfehler ist bei allen vergleichbar (sogar leicht höher als in der Lineraren Regression), weil die Regualrisierung 
 # Regularisierung bestraft overfitting mit dem Strafterm lambda, um so die Varianz zu refuzieren. Da hier jedoch underfitting vorliegt, keine Positiven aspekte 
+=======
+
+#    ...Platz für Ihren Code und Begründung...
+
+>>>>>>> Stashed changes
