@@ -148,6 +148,30 @@ test.mqa.lasso<- mean(
 
 test.mqa.lasso
 
+#Feature_selection
+coef(lasso.fit)
+# Ergebnis:
+#14 x 1 sparse Matrix of class "dgCMatrix"
+#s0
+#(Intercept)  32.739054210
+#crim         -0.107451038
+#zn            0.035628104
+#indus         .          
+#chas          2.529593970
+#nox         -17.426837901
+#rm            3.940486249
+# age           .          
+# dis          -1.436922259
+# rad           0.292110037
+# tax          -0.009911046
+# ptratio      -0.993739448
+# b             0.010684410
+# lstat        -0.533948281
+
+#Die indus und age Variablen werden im Finalen Modell mit Null geschätzt, 
+#deshalb wird statt einer Zahl ( die im ridge zwar klein aber nicht direkt 0 wird) ein punkt angezeigt
+#==> steht für null
+
 #------------------------------------
 # Aufgabe 6: Vergleich der Ergebnisse
 #------------------------------------
@@ -155,4 +179,4 @@ test.mqa.lm
 test.mqa.lasso
 test.mqa.ridge
 
-#    ...Platz für Ihren Code und Begründung...
+#  Der Testfehler ist bei allen 
