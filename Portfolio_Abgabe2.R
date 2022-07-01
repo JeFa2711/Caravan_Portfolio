@@ -45,7 +45,8 @@ data("BostonHousing")
 #------------------------------------
 
 #    ...Platz für Ihren Code...
-set.seed(28) # Für bessere Nachvollziehbarkeit wird ein Seed gesetzt.
+seed <- seed #damit alle seed funktionen den gleichen seed haben
+set.seed(seed) # Für bessere Nachvollziehbarkeit wird ein Seed gesetzt.
 laenge <- length(BostonHousing$crim) # Anzahl der Datensätze
 aufteilung <- sample(laenge,0.8*laenge) # Aufteilung für Test und Trainingsdaten
 BostonHousing.trainingsdaten <- BostonHousing[aufteilung,] # Trainingsdaten
@@ -110,32 +111,48 @@ abline(reg= lm.fit.all, col ="blue")
 #    ...Platz für Ihren Code...
 # Kommentar: ich habe ehrlich gesagt keine Ahnung ob das richtig ist 
 library(glmnet)
+set.seed(seed)
 lambda <- 10^seq( from = 5, to = -3, length = 100)
 
+#TODO Beschreibung
 BostonHousing.trainingsdaten.x <- data.matrix(subset(BostonHousing.trainingsdaten, select = -c(medv) ))
-#y
 BostonHousing.trainingsdaten.y <- BostonHousing.trainingsdaten[, "medv"]
 
-ridge.fit <- cv.glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 0, lambda =lambda)
+#passende Daten für den Test zut bestimmung des Testfehlers
+BostonHousing.testdaten.x <- data.matrix(subset(BostonHousing.testdaten, select = -c(medv) ))
+BostonHousing.testdaten.y <- BostonHousing.testdaten[, "medv"]
 
-#training.mqa.ridge <- mqaTraining(ridge.fit)
-#training.mqa.ridge
+ridge.fit.cv <- cv.glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 0, lambda =lambda)
+bestes_lambda.ridge <- ridge.fit.cv$lambda.min
+ridge.fit <- glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 0, lambda =bestes_lambda.ridge)
 
-#test.mqa.ridge <- mqaTest(ridge.fit)
-#test.mqa.ridge
 
-mean(
-  (BostonHousing.trainingsdaten.y - predict(ridge.fit, BostonHousing.trainingsdaten.x))^2
-  )
+test.mqa.ridge<- mean(
+  (BostonHousing.testdaten.y - predict(ridge.fit, BostonHousing.testdaten.x))^2
+)
+test.mqa.ridge
 #------------------------------------
 # Aufgabe 5: Lasso Regression
 #------------------------------------
 
 #    ...Platz für Ihren Code...
+lasso.fit.cv <- cv.glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 1, lambda =lambda)
+bestes_lambda.lasso <- lasso.fit.cv$lambda.min
+lasso.fit <- glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 1, lambda =bestes_lambda.lasso)
 
+
+
+test.mqa.lasso<- mean(
+  (BostonHousing.testdaten.y - predict(lasso.fit, BostonHousing.testdaten.x))^2
+)
+
+test.mqa.lasso
 
 #------------------------------------
 # Aufgabe 6: Vergleich der Ergebnisse
 #------------------------------------
+test.mqa.lm
+test.mqa.lasso
+test.mqa.ridge
 
 #    ...Platz für Ihren Code und Begründung...
