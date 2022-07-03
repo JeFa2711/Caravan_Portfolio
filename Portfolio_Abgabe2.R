@@ -43,7 +43,7 @@ data("BostonHousing")
 #------------------------------------
 
 seed <- 15
-# Damit alle Seed-Funktionen den gleichen Seed haben. Für alle Zahlen hier wurde der seed15 verwendet
+# Damit alle Seed-Funktionen den gleichen Seed haben. Für alle Zahlen hier wurde der seed=15 verwendet
 set.seed(seed) # Für bessere Nachvollziehbarkeit wird ein Seed gesetzt.
 laenge <- length(BostonHousing$crim) # Anzahl der Datensätze
 aufteilung <- sample(laenge,0.8*laenge) # Aufteilung für Test und Trainingsdaten
@@ -67,7 +67,7 @@ mqaTraining <- function(modell){
     )
 }
 
-# Funktion für MQA für Trainingsdaten
+# Funktion für MQA für Testdaten
 mqaTest <- function(modell){
   return( 
     mean(
@@ -92,10 +92,8 @@ test.mqa.lm
 # Aufgabe 3: Bias-Variance
 #------------------------------------
 
-
-
 summary(lm.fit.all)
-# Relevante Ergebnisse des summaries:
+# Relevante Ergebnisse der Summary:
 # Residual standard error: 4.811 on 390 degrees of freedom
 # Multiple R-squared:  0.7282,	Adjusted R-squared:  0.7191 
 # F-statistic: 80.36 on 13 and 390 DF,  p-value: < 2.2e-16
@@ -103,8 +101,8 @@ summary(lm.fit.all)
 # R-Squared zeigt an, wie viel der beobachteten Varianz durch das Regressionsmodell erklärt wird 
 # Ein wert von 0.74 bedeuete, dass 74% der Varianz durch das Regeressionsmodell erklärt werden kann 
 # Dies bedeuet, dass das Modell 26% der Varianz im Datensatz nicht erklären kann. Dies ist also kein extrem schlechter Wert, aber auch kein guter Wert
-# Dies geschieht größtenteils durch die Angepasstheit des Modells an die Daten. Im fall des OVerfitting (Variance muss reduziert werden, weil sich das Modell zu sehr an das zufällige Rauschen anpasst), passt sich das Modell zu sehr an
-# Wenn es Probleme mit dem Bias gibt (Underfitting), passt sich das Modell nicht genug an die daten an 
+# Dies geschieht größtenteils durch die Angepasstheit des Modells an die Daten. Im Fall des OVerfitting (Variance muss reduziert werden, weil sich das Modell zu sehr an das zufällige Rauschen anpasst), passt sich das Modell zu sehr an
+# Wenn es Probleme mit dem Bias gibt (Underfitting), passt sich das Modell nicht genug an die Daten an 
 
 # Over-/Underfitting 
 plot(BostonHousing$medv)
@@ -113,8 +111,8 @@ abline(reg= lm.fit.all, col ="blue")
 # Im Plot erkennt man eindeutig, dass eine lineares Modell nicht flexibel genug ist, um die Daten zu erklären.
 # Deshalb liegt hier ein Fall von Underfitting vor. 
 # Das ist hier der Fall, da der Zusammenhang, wie man auf dem Plot sehen kann, nicht linear ist, aber mit einem linearen Modell
-# erklärt werden soll. Das PRoblem liegt hierbei somit nicht in einer großen Varianz, da sich das Modell auf Grund der geringen flexibilität nicht gut an die Trainigsdaten anpassen kann 
-# Im Fall von einem Variance Problem (overfitting), würde man außerdem erwarten, dass der Testfehler signifikant größer als der Trainingsfehler ist. 
+# erklärt werden soll. Das Problem liegt hierbei somit nicht in einer großen Varianz, da sich das Modell auf Grund der geringen Flexibilität nicht gut an die Trainigsdaten anpassen kann 
+# Im Fall von einem Variance Problem (Overfitting), würde man außerdem erwarten, dass der Testfehler signifikant größer als der Trainingsfehler ist. 
 
 #------------------------------------
 # Aufgabe 4: Ridge Regression
@@ -189,8 +187,8 @@ coef(lasso.fit)
 # lstat        -0.547459892
 
 # Keine Variable wird auf Null geschätzt
-# Im lasso wird dies jedoch bei anderen Seed(z.B. seed=18, bei dem indus und age auf null geschätzt werden)  ein Punkt angezeigt, welcher für eine null schätzung  steht.
-# Im ridge werden die werte zwa r sehr klein, aber (praktisch) nie null
+# Im lasso wird dies jedoch bei anderen Seed (z.B. seed=18, bei dem indus und age auf null geschätzt werden)  ein Punkt angezeigt, welcher für eine null-Schätzung  steht.
+# Im Ridge werden die Werte zwarr sehr klein, aber nie null
 
 #------------------------------------
 # Aufgabe 6: Vergleich der Ergebnisse
@@ -205,11 +203,10 @@ testfehler <- c(test.mqa.lasso, test.mqa.lm, test.mqa.ridge)
 var(testfehler)
 # Wert = [1] 0.014206383
 # Die Varianz ist ein Weg, um zu messen, wie verteilt die Datenwerte um den Mittelwert liegen.
-
-# der sehr geringe Wert der Varianz zeigt, dass die Regularisierung zu keinem Großem Unterschied im Testfehler geführt hat
-#, der Testfehler aber bei den Regularisierten Modellen bei diesem seed leicht kleiner war(in anderen seeds varriert dies jedoch)
+# Der sehr geringe Wert der Varianz zeigt, dass die Regularisierung zu keinem großem Unterschied im Testfehler geführt hat,
+# der Testfehler aber bei den regularisierten Modellen bei diesem seed leicht kleiner war (in anderen seeds varriert dies jedoch)
 # Dies lässt sich dadurch begründen, dass die Regularisierung Overfitting (anhand des Strafterms Lambda) bestrafen soll.
-# Damit reduziert die Regularisierung die Varianz, aber nicht die Bias
+# Damit reduziert die Regularisierung die Varianz, aber nicht den Bias.
 # Durch das lineare Modell liegt hier allerdings Underfitting vor, auf Grund der hohen Bias der linearen Regression, da das Modell nicht die nötige Flexibilität hat, um sich an den Datensatz anzupassen
 # (siehe Aufgabe 3), weshalb Regularisierungsmethoden zur Vermeidung der Überanpassung
 # an dieser Stelle keinen Sinn ergeben und auch den Testfehler somit nicht reduzieren können. 
