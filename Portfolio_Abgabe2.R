@@ -80,26 +80,40 @@ summary(lm.fit.all)
 #Trainingsfehler
 training.mqa.lm <- mqaTraining(lm.fit.all)
 training.mqa.lm
+#  21.48145
 
 #Testfehler
 test.mqa.lm <- mqaTest(lm.fit.all)
 test.mqa.lm 
-
+# 24.27639
 
 #------------------------------------
 # Aufgabe 3: Bias-Variance
 #------------------------------------
 
+
+
+summary(lm.fit.all)
+# Relevante Ergebnisse des summaries:
+# Residual standard error: 4.717 on 390 degrees of freedom
+# Multiple R-squared:  0.7438,	Adjusted R-squared:  0.7353 
+# F-statistic:  87.1 on 13 and 390 DF,  p-value: < 2.2e-16
+
+# R-Squared zeigt an, wie viel der beobachteten Varianz durch das Regressionsmodell erklärt wird 
+# Ein wert von 0.74 bedeuete, dass 74% der Varianz durch das Regeressionsmodell erklärt werden kann 
+# Dies bedeuet, dass das Modell 26% der Varianz im Datensatz nicht erklären kann. Dies ist also kein extrem schlechter Wert, aber auch kein guter Wert
+# Dies geschieht größtenteils durch die Angepasstheit des Modells an die Daten. Im fall des OVerfitting (Variance muss reduziert werden, weil sich das Modell zu sehr an das zufällige Rauschen anpasst), passt sich das Modell zu sehr an
+# Wenn es Probleme mit dem Bias gibt (Underfitting), passt sich das Modell nicht genug an die daten an 
+
 # Over-/Underfitting 
 plot(BostonHousing$medv)
 abline(reg= lm.fit.all, col ="blue")
 
-# Im Plot erkennt man eindeutig, dass eine lineares Modell die Daten nicht erklären kann.
+# Im Plot erkennt man eindeutig, dass eine lineares Modell nicht flexibel genug ist, um die Daten zu erklären.
 # Deshalb liegt hier ein Fall von Underfitting vor. 
-
-# Der Bias ist hoch, wenn ein Modell zu allgemein ist, um genaue Prognosen zu treffen. 
 # Das ist hier der Fall, da der Zusammenhang, wie man auf dem Plot sehen kann, nicht linear ist, aber mit einem linearen Modell
-# erklärt werden soll. Die Varianz ist niedrig. 
+# erklärt werden soll. Das PRoblem liegt hierbei somit nicht in einer großen Varianz, da sich das Modell auf Grund der geringen flexibilität nicht gut an die Trainigsdaten anpassen kann 
+# Im Fall von einem Variance Problem (overfitting), würde man außerdem einen größeren Unterschied zwischen Training MQA und Test MQA erwarten 
 
 #------------------------------------
 # Aufgabe 4: Ridge Regression
@@ -184,6 +198,16 @@ test.mqa.lm
 test.mqa.lasso
 test.mqa.ridge
 
-# Der Testfehler ist bei allen vergleichbar, weil die Regularisierung Overfitting (anhand des Strafterms Lambda) bestrafen soll.
-# Durch das lineare Modell liegt hier allerdings Underfitting vor (siehe Aufgabe 3), weshalb Regularisierungsmethoden
-# an dieser Stelle keinen Sinn ergeben und auch den Testfehler somit nicht reduzieren. 
+#Berechnugn der Varianz 
+testfehler <- c(test.mqa.lasso, test.mqa.lm, test.mqa.ridge)
+var(testfehler)
+# Wert = [1] 0.005595633
+# Die Varianz ist ein Weg, um zu messen, wie verteilt die Datenwerte um den Mittelwert liegen.
+
+# der sehr geringe Wert der Varianz zeigt, dass die Regularisierung zu keinem Großem Unterschied im Testfehler geführt hat
+#, der Testfehler aber bei den Regularisierten Modellen leicht größer war.
+# Dies lässt sich dadurch begründen, dass die Regularisierung Overfitting (anhand des Strafterms Lambda) bestrafen soll.
+# Damit reduziert die Regularisierung die Varianz, aber nicht die Bias
+# Durch das lineare Modell liegt hier allerdings Underfitting vor, auf Grund der hohen Bias der linearen Regression, da das Modell nicht die nötige Flexibilität hat, um sich an den Datensatz anzupassen
+# (siehe Aufgabe 3), weshalb Regularisierungsmethoden zur Vermeidung der Überanpassung
+# an dieser Stelle keinen Sinn ergeben und auch den Testfehler somit nicht reduzieren können. 
