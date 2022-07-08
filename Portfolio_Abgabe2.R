@@ -99,20 +99,18 @@ summary(lm.fit.all)
 # F-statistic: 80.36 on 13 and 390 DF,  p-value: < 2.2e-16
 
 # R-Squared zeigt an, wie viel der beobachteten Varianz durch das Regressionsmodell erklärt wird 
-# Ein wert von 0.74 bedeuete, dass 74% der Varianz durch das Regeressionsmodell erklärt werden kann 
-# Dies bedeuet, dass das Modell 26% der Varianz im Datensatz nicht erklären kann. Dies ist also kein extrem schlechter Wert, aber auch kein guter Wert
-# Dies geschieht größtenteils durch die Angepasstheit des Modells an die Daten. Im Fall des OVerfitting (Variance muss reduziert werden, weil sich das Modell zu sehr an das zufällige Rauschen anpasst), passt sich das Modell zu sehr an
+# Ein wert von 0.74 bedeuet, dass 74% der Varianz durch das Regeressionsmodell erklärt werden kann 
+# Dies bedeuet, dass das Modell 26% der Varianz im Datensatz nicht erklären kann. Dies ist also kein extrem schlechter Wert, aber auch kein (sehr) guter Wert
+# Dies geschieht größtenteils durch die Anpassung des Modells an die Daten. Im Fall des OVerfitting (Variance muss reduziert werden, weil sich das Modell zu sehr an das zufällige Rauschen anpasst), passt sich das Modell zu sehr an
 # Wenn es Probleme mit dem Bias gibt (Underfitting), passt sich das Modell nicht genug an die Daten an 
 
-# Over-/Underfitting 
-plot(BostonHousing$medv)
-abline(reg= lm.fit.all, col ="blue")
 
-# Im Plot erkennt man eindeutig, dass eine lineares Modell nicht flexibel genug ist, um die Daten zu erklären.
-# Deshalb liegt hier ein Fall von Underfitting vor. 
-# Das ist hier der Fall, da der Zusammenhang, wie man auf dem Plot sehen kann, nicht linear ist, aber mit einem linearen Modell
+# Im Fall von einem Variance Problem (Overfitting), würde man außerdem erwarten, dass der Testfehler signifikant größer als der Trainingsfehler ist.
+# Hier ist des Testfehler jedoch *geringer* als der Trainingsfehler. (bei anderen beobachteten Seeds, ist der Testfehler höher, aber nur sehr gering höher)
+# Hier liegt desalb ein Fall von Underfitting vor. 
+# Das ist hier höchstwahrscheinlich der Fall, da der Zusammenhang nicht linear ist, aber mit einem linearen Modell
 # erklärt werden soll. Das Problem liegt hierbei somit nicht in einer großen Varianz, da sich das Modell auf Grund der geringen Flexibilität nicht gut an die Trainigsdaten anpassen kann 
-# Im Fall von einem Variance Problem (Overfitting), würde man außerdem erwarten, dass der Testfehler signifikant größer als der Trainingsfehler ist. 
+ 
 
 #------------------------------------
 # Aufgabe 4: Ridge Regression
@@ -124,13 +122,15 @@ set.seed(seed)
 lambda <- 10^seq( from = 5, to = -3, length = 100)
 
 #Trainingsdatenmatrizen für die unabhängigen (x) und abhängigen Variablen (y) erstellen
-BostonHousing.trainingsdaten.x <- data.matrix(subset(BostonHousing.trainingsdaten, select = -c(medv) ))
-BostonHousing.trainingsdaten.y <- BostonHousing.trainingsdaten[, "medv"]
-
+  BostonHousing.trainingsdaten.x <- model.matrix (medv ~ ., BostonHousing.trainingsdaten)[, -1]
+  BostonHousing.trainingsdaten.y <- BostonHousing.trainingsdaten$medv
+  
 # Passende Daten für den Test zur Bestimmung des Testfehlers
-BostonHousing.testdaten.x <- data.matrix(subset(BostonHousing.testdaten, select = -c(medv) ))
-BostonHousing.testdaten.y <- BostonHousing.testdaten[, "medv"]
 
+  BostonHousing.testdaten.x <- model.matrix (medv ~ ., BostonHousing.testdaten)[, -1]
+  BostonHousing.testdaten.y <- BostonHousing.testdaten$medv
+
+  
 # Ridge Regressionsmodell
 ridge.fit.cv <- cv.glmnet(x= BostonHousing.trainingsdaten.x,y= BostonHousing.trainingsdaten$medv,alpha = 0, lambda =lambda)
 
